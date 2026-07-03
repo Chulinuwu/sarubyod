@@ -1,0 +1,26 @@
+import type { Metadata } from "next";
+import { Sarabun } from "next/font/google";
+import "./globals.css";
+
+const sarabun = Sarabun({
+  subsets: ["thai", "latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-sarabun",
+});
+
+export const metadata: Metadata = {
+  title: "บิลสรุปยอดการฝากขาย",
+  description: "ระบบกรอกบิลสรุปยอดการฝากขายประจำวัน",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="th" className={`${sarabun.variable} h-full antialiased`}>
+      <body className="min-h-full">{children}</body>
+    </html>
+  );
+}

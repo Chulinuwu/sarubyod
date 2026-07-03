@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-subtle: #f5f8fc;
+  --color-brand: #533afd;
+  --color-brand-hover: #4434d4;
+  --color-brand-soft: #eef0ff;
+  --color-brand-border: #d6d9fc;
+  --color-ink: #061b31;
+  --color-label: #273951;
+  --color-body: #64748d;
+  --color-muted: #94a3b8;
+  --color-line: #e5edf5;
+  --color-line-strong: #d7e0ea;
+  --color-success: #108c3d;
+  --color-success-soft: #e7f6ec;
+  --color-danger: #e11d48;
+  --color-danger-soft: #fdeef2;
+  --color-paper-head: #e9f0fb;
+
+  --font-sans: var(--font-sarabun);
+
+  --shadow-xs: 0 1px 2px rgba(23, 23, 23, 0.06);
+  --shadow-card:
+    rgba(50, 50, 93, 0.13) 0px 13px 30px -14px,
+    rgba(0, 0, 0, 0.07) 0px 8px 18px -12px;
+  --shadow-elevated:
+    rgba(50, 50, 93, 0.25) 0px 30px 45px -30px,
+    rgba(0, 0, 0, 0.1) 0px 18px 36px -18px;
+  --shadow-brand: rgba(83, 58, 253, 0.28) 0px 8px 20px -8px;
+}
+
+:root {
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sarabun), ui-sans-serif, system-ui, sans-serif;
+}
+
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
