@@ -42,9 +42,13 @@ export function AdminTopBar({ displayName }: { displayName: string }) {
           <button
             type="button"
             onClick={logout}
-            className="rounded-lg px-3 py-1.5 text-sm font-semibold text-body transition-colors hover:bg-subtle hover:text-ink"
+            aria-label="ออกจากระบบ"
+            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-body transition-colors hover:bg-subtle hover:text-ink sm:px-3"
           >
-            ออกจากระบบ
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+            </svg>
+            <span className="hidden sm:inline">ออกจากระบบ</span>
           </button>
         </div>
       </div>

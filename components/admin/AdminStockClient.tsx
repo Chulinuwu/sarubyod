@@ -2,10 +2,13 @@
 import { useCallback, useState } from "react";
 import type { StockLotSummary, StockLotForm } from "@/lib/stock/types";
 import { createLot, adminErrorText } from "@/lib/admin/client";
-import { LotCard } from "./LotCard";
+import { cn } from "@/lib/cn";
+import { LotSidebar } from "./LotSidebar";
+import { LotDetail } from "./LotDetail";
 import { LotFields } from "./LotFields";
-import { Button } from "@/components/ui/Button";
 import { StatusBanner, type Status } from "@/components/bill/StatusBanner";
+
+const NEW = "new";
 
 const emptyLot: StockLotForm = {
   name: "",
@@ -21,7 +24,7 @@ export function AdminStockClient({
   initialLots: StockLotSummary[];
 }) {
   const [lots, setLots] = useState(initialLots);
-  const [creating, setCreating] = useState(false);
+  const [selection, setSelection] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Status>(null);
 
@@ -36,8 +39,8 @@ export function AdminStockClient({
     try {
       const lot = await createLot(v);
       setLots((p) => [{ ...lot, itemCount: 0 }, ...p]);
-      setCreating(false);
-      setStatus({ type: "success", text: "สร้าง lot เรียบร้อย" });
+      setSelection(lot.id);
+      setStatus({ type: "success", text: "สร้างล็อตแล้ว เพิ่มสินค้าได้เลย" });
     } catch (e) {
       onError(e);
     } finally {
@@ -47,49 +50,55 @@ export function AdminStockClient({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-ink">จัดการ stocklist</h1>
-          <p className="text-sm text-muted">
-            แต่ละ lot คือรอบที่ผู้ฝากขายส่งของมา
-          </p>
-        </div>
-        {!creating ? (
-          <Button onClick={() => setCreating(true)}>+ สร้าง lot</Button>
-        ) : null}
+      <div>
+        <h1 className="text-lg font-bold text-ink">จัดการ stocklist</h1>
+        <p className="text-sm text-muted">
+          เลือกล็อตทางซ้ายเพื่อจัดการสินค้าในล็อตนั้น
+        </p>
       </div>
 
       {status ? <StatusBanner status={status} /> : null}
 
-      {creating ? (
-        <LotFields
-          initial={emptyLot}
-          submitting={busy}
-          submitLabel="สร้าง lot"
-          onSubmit={create}
-          onCancel={() => setCreating(false)}
-        />
-      ) : null}
-
-      {lots.length === 0 && !creating ? (
-        <p className="rounded-xl border border-dashed border-line py-10 text-center text-sm text-muted">
-          ยังไม่มี lot กด สร้าง lot เพื่อเริ่ม
-        </p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {lots.map((lot) => (
-            <LotCard
-              key={lot.id}
-              lot={lot}
-              onUpdated={(next) =>
-                setLots((p) => p.map((l) => (l.id === next.id ? next : l)))
-              }
-              onDeleted={(id) => setLots((p) => p.filter((l) => l.id !== id))}
-              onError={onError}
-            />
-          ))}
+      <div className="grid gap-6 md:grid-cols-[300px_1fr] md:items-start">
+        <div className={cn(selection !== null ? "hidden md:block" : "block")}>
+          <LotSidebar
+            lots={lots}
+            selectedId={selection}
+            onSelect={setSelection}
+            onNew={() => setSelection(NEW)}
+          />
         </div>
-      )}
+
+        <div className={cn(selection === null ? "hidden md:block" : "block")}>
+          {selection === NEW ? (
+            <LotFields
+              initial={emptyLot}
+              submitting={busy}
+              submitLabel="สร้างล็อต"
+              onSubmit={create}
+              onCancel={() => setSelection(null)}
+            />
+          ) : selection ? (
+            <LotDetail
+              key={selection}
+              lotId={selection}
+              onLotChanged={(lot) =>
+                setLots((p) => p.map((l) => (l.id === lot.id ? lot : l)))
+              }
+              onLotDeleted={(id) => {
+                setLots((p) => p.filter((l) => l.id !== id));
+                setSelection(null);
+              }}
+              onError={onError}
+              onBack={() => setSelection(null)}
+            />
+          ) : (
+            <div className="hidden rounded-xl border border-dashed border-line py-16 text-center text-sm text-muted md:block">
+              เลือกล็อตทางซ้าย หรือกด สร้าง lot ใหม่
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import {
   BILL_ITEMS_TABLE,
 } from "@/lib/supabase/server";
 import { computeBill } from "./calc";
-import type { BillSummary, BillRecord } from "./types";
+import type { BillSummary, BillRecord, BillInput } from "./types";
 
 type BillRow = {
   id: string;
@@ -118,4 +118,52 @@ export async function getBill(id: string): Promise<BillRecord | null> {
     createdBy: row.created_by,
     createdAt: row.created_at,
   };
+}
+
+export async function updateBill(id: string, input: BillInput): Promise<void> {
+  const supabase = getServiceClient();
+  if (!supabase) throw new Error("supabase_not_configured");
+  const bill = computeBill(input);
+
+  const { error: upErr } = await supabase
+    .from(BILLS_TABLE)
+    .update({
+      bill_no: bill.billNo,
+      bill_date: bill.billDate,
+      shop_name: bill.shopName,
+      consignor: bill.consignor,
+      receiver: bill.receiver,
+      phone: bill.phone,
+      commission: bill.commission,
+      note: bill.note,
+      total_amount: bill.totalAmount,
+      net_transfer: bill.netTransfer,
+    })
+    .eq("id", id);
+  if (upErr) throw upErr;
+
+  const { error: delErr } = await supabase
+    .from(BILL_ITEMS_TABLE)
+    .delete()
+    .eq("bill_id", id);
+  if (delErr) throw delErr;
+
+  const rows = bill.items.map((it) => ({
+    bill_id: id,
+    stock_item_id: it.stockItemId,
+    seq: it.seq,
+    name: it.name,
+    base_price: it.basePrice,
+    sale_price: it.salePrice,
+    qty: it.qty,
+  }));
+  const { error: insErr } = await supabase.from(BILL_ITEMS_TABLE).insert(rows);
+  if (insErr) throw insErr;
+}
+
+export async function deleteBill(id: string): Promise<void> {
+  const supabase = getServiceClient();
+  if (!supabase) throw new Error("supabase_not_configured");
+  const { error } = await supabase.from(BILLS_TABLE).delete().eq("id", id);
+  if (error) throw error;
 }

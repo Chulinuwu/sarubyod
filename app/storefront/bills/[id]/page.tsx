@@ -6,6 +6,7 @@ import { getBill } from "@/lib/bill/repo";
 import type { BillRecord } from "@/lib/bill/types";
 import { TopBar } from "@/components/bill/TopBar";
 import { BillPreview } from "@/components/bill/BillPreview";
+import { DeleteBillButton } from "@/components/bill/DeleteBillButton";
 
 export default async function BillDetailPage({
   params,
@@ -34,7 +35,7 @@ export default async function BillDetailPage({
         isAdmin={session.role === "admin"}
       />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <Link
             href="/storefront/bills"
             className="text-sm font-semibold text-brand hover:underline"
@@ -42,14 +43,23 @@ export default async function BillDetailPage({
             กลับไปรายการ
           </Link>
           {bill ? (
-            <a
-              href={`/api/bills/${bill.id}/pdf`}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-lg border border-brand-border px-3.5 py-1.5 text-sm font-semibold text-brand transition-colors hover:bg-brand-soft"
-            >
-              โหลด PDF
-            </a>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/storefront/bills/${bill.id}/edit`}
+                className="rounded-lg border border-brand-border px-3.5 py-1.5 text-sm font-semibold text-brand transition-colors hover:bg-brand-soft"
+              >
+                แก้ไข
+              </Link>
+              <a
+                href={`/api/bills/${bill.id}/pdf`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-semibold text-body transition-colors hover:bg-subtle hover:text-ink"
+              >
+                โหลด PDF
+              </a>
+              <DeleteBillButton id={bill.id} />
+            </div>
           ) : null}
         </div>
 

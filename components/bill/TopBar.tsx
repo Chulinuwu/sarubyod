@@ -3,20 +3,22 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Wordmark } from "@/components/ui/Wordmark";
 
-const NAV = [
+const BASE_NAV = [
   { key: "create", label: "สร้างบิล", href: "/storefront" },
   { key: "history", label: "สรุปยอด", href: "/storefront/bills" },
-  { key: "admin", label: "จัดการสต็อก", href: "/admin", adminOnly: true },
 ] as const;
+
+const STOCK_NAV = { key: "stock", label: "สต๊อก", href: "/storefront/stock" } as const;
+const ADMIN_NAV = { key: "admin", label: "จัดการสต็อก", href: "/admin" } as const;
 
 type Props = {
   displayName: string;
-  active: "create" | "history";
+  active: "create" | "history" | "stock" | "admin";
   isAdmin?: boolean;
 };
 
 export function TopBar({ displayName, active, isAdmin }: Props) {
-  const nav = NAV.filter((n) => !("adminOnly" in n) || isAdmin);
+  const nav = [...BASE_NAV, isAdmin ? ADMIN_NAV : STOCK_NAV];
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.href = "/login";

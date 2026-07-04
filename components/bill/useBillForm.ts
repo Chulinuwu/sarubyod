@@ -30,8 +30,8 @@ function makeInitial(defaults?: BillDefaults): BillInput {
   };
 }
 
-export function useBillForm(defaults?: BillDefaults) {
-  const [input, setInput] = useState<BillInput>(() => makeInitial(defaults));
+export function useBillForm(defaults?: BillDefaults, initial?: BillInput) {
+  const [input, setInput] = useState<BillInput>(() => initial ?? makeInitial(defaults));
 
   const setField = useCallback(
     <K extends keyof BillInput>(key: K, value: BillInput[K]) => {
@@ -62,7 +62,10 @@ export function useBillForm(defaults?: BillDefaults) {
     }));
   }, []);
 
-  const reset = useCallback(() => setInput(makeInitial(defaults)), [defaults]);
+  const reset = useCallback(
+    () => setInput(initial ?? makeInitial(defaults)),
+    [defaults, initial],
+  );
 
   const computed = useMemo(() => computeBill(input), [input]);
 

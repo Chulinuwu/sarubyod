@@ -110,6 +110,24 @@ export async function listActiveStockOptions(): Promise<StockOption[]> {
   });
 }
 
+export async function listActiveLotsWithItems(): Promise<StockLotWithItems[]> {
+  const supabase = getServiceClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from(STOCK_LOTS_TABLE)
+    .select("*, items:sarubyod_stock_items(*)")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  type Row = LotRow & { items: ItemRow[] };
+  return (data as Row[] | null ?? []).map((r) => ({
+    ...toLot(r),
+    items: (r.items ?? [])
+      .map(toItem)
+      .sort((a, b) => a.name.localeCompare(b.name, "th")),
+  }));
+}
+
 export async function listLots(): Promise<StockLotSummary[]> {
   const supabase = getServiceClient();
   if (!supabase) return [];
