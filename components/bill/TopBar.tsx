@@ -6,14 +6,17 @@ import { Wordmark } from "@/components/ui/Wordmark";
 const NAV = [
   { key: "create", label: "สร้างบิล", href: "/storefront" },
   { key: "history", label: "สรุปยอด", href: "/storefront/bills" },
+  { key: "admin", label: "จัดการสต็อก", href: "/admin", adminOnly: true },
 ] as const;
 
 type Props = {
   displayName: string;
   active: "create" | "history";
+  isAdmin?: boolean;
 };
 
-export function TopBar({ displayName, active }: Props) {
+export function TopBar({ displayName, active, isAdmin }: Props) {
+  const nav = NAV.filter((n) => !("adminOnly" in n) || isAdmin);
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.href = "/login";
@@ -25,7 +28,7 @@ export function TopBar({ displayName, active }: Props) {
         <div className="flex items-center gap-3 sm:gap-6">
           <Wordmark />
           <nav className="flex items-center gap-1">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <Link
                 key={n.key}
                 href={n.href}

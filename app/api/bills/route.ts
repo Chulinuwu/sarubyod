@@ -59,6 +59,7 @@ export async function POST(req: Request) {
 
   const rows = bill.items.map((it) => ({
     bill_id: inserted.id,
+    stock_item_id: it.stockItemId,
     seq: it.seq,
     name: it.name,
     base_price: it.basePrice,

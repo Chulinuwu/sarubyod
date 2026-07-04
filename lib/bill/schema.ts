@@ -1,11 +1,17 @@
 import { z } from "zod";
 
-export const billItemSchema = z.object({
-  name: z.string().trim().min(1, "กรอกชื่อสินค้า"),
-  basePrice: z.number().nonnegative(),
-  salePrice: z.number().nonnegative(),
-  qty: z.number().int().nonnegative(),
-});
+export const billItemSchema = z
+  .object({
+    stockItemId: z.string().nullable().default(null),
+    name: z.string().trim().min(1, "กรอกชื่อสินค้า"),
+    basePrice: z.number().nonnegative(),
+    salePrice: z.number().nonnegative(),
+    qty: z.number().int().nonnegative(),
+  })
+  .refine((it) => it.salePrice >= it.basePrice, {
+    message: "ราคาขายต้องไม่ต่ำกว่าราคาฐาน",
+    path: ["salePrice"],
+  });
 
 export const billInputSchema = z.object({
   billDate: z.string().min(1, "เลือกวันที่"),

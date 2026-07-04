@@ -13,13 +13,21 @@ import { TopBar } from "./TopBar";
 import { StatusBanner, type Status } from "./StatusBanner";
 import type { Tab } from "./tabs";
 import type { BillDefaults } from "./useBillForm";
+import type { StockOption } from "@/lib/stock/types";
 
 type Props = {
   displayName: string;
   defaults: BillDefaults;
+  stockOptions: StockOption[];
+  isAdmin: boolean;
 };
 
-export function StorefrontClient({ displayName, defaults }: Props) {
+export function StorefrontClient({
+  displayName,
+  defaults,
+  stockOptions,
+  isAdmin,
+}: Props) {
   const form = useBillForm(defaults);
   const [tab, setTab] = useState<Tab>("form");
   const [errors, setErrors] = useState<FieldErrors>(emptyErrors);
@@ -66,7 +74,7 @@ export function StorefrontClient({ displayName, defaults }: Props) {
 
   return (
     <div className="flex min-h-full flex-col">
-      <TopBar displayName={displayName} active="create" />
+      <TopBar displayName={displayName} active="create" isAdmin={isAdmin} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-5">
         <MobileTabs tab={tab} onChange={setTab} />
         {status ? (
@@ -76,7 +84,7 @@ export function StorefrontClient({ displayName, defaults }: Props) {
         ) : null}
         <div className="mt-4 grid gap-6 md:grid-cols-2 md:items-start">
           <div className={cn(tab === "form" ? "block" : "hidden", "md:block")}>
-            <FormPanel errors={errors} {...form} />
+            <FormPanel errors={errors} stockOptions={stockOptions} {...form} />
             <p className="mt-6 text-xs text-muted">จัดทำโดย {displayName}</p>
           </div>
           <div

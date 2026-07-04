@@ -24,6 +24,7 @@ type BillRow = {
 };
 
 type ItemRow = {
+  stock_item_id: string | null;
   name: string;
   base_price: number | string;
   sale_price: number | string;
@@ -88,7 +89,7 @@ export async function getBill(id: string): Promise<BillRecord | null> {
 
   const { data: items, error: itemsErr } = await supabase
     .from(BILL_ITEMS_TABLE)
-    .select("name,base_price,sale_price,qty")
+    .select("stock_item_id,name,base_price,sale_price,qty")
     .eq("bill_id", id)
     .order("seq", { ascending: true });
   if (itemsErr) throw itemsErr;
@@ -103,6 +104,7 @@ export async function getBill(id: string): Promise<BillRecord | null> {
     phone: row.phone,
     note: row.note,
     items: (items as ItemRow[] | null ?? []).map((it) => ({
+      stockItemId: it.stock_item_id,
       name: it.name,
       basePrice: Number(it.base_price),
       salePrice: Number(it.sale_price),

@@ -3,7 +3,10 @@ import { useState } from "react";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 
-const DEFAULT_NEXT = "/storefront";
+const HOME_BY_ROLE: Record<string, string> = {
+  admin: "/admin",
+  storefront: "/storefront",
+};
 
 export function LoginForm() {
   const [username, setUsername] = useState("");
@@ -25,8 +28,11 @@ export function LoginForm() {
       setLoading(false);
       return;
     }
+    const { role } = await res.json().catch(() => ({ role: "" }));
     const next =
-      new URLSearchParams(window.location.search).get("next") || DEFAULT_NEXT;
+      new URLSearchParams(window.location.search).get("next") ||
+      HOME_BY_ROLE[role] ||
+      "/storefront";
     window.location.href = next;
   }
 

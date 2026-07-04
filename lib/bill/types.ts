@@ -8,6 +8,7 @@ export type BillHeader = {
 };
 
 export type BillItemInput = {
+  stockItemId: string | null;
   name: string;
   basePrice: number;
   salePrice: number;

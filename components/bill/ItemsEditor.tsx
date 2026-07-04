@@ -1,4 +1,6 @@
 import type { BillComputed, BillItemInput } from "@/lib/bill/types";
+import type { ItemFieldErrors } from "@/lib/bill/validation";
+import type { StockOption } from "@/lib/stock/types";
 import { TH } from "@/lib/bill/constants";
 import { formatMoney } from "@/lib/bill/format";
 import { ItemRow } from "./ItemRow";
@@ -6,7 +8,8 @@ import { ItemRow } from "./ItemRow";
 type Props = {
   items: BillItemInput[];
   computed: BillComputed;
-  itemErrors: Record<number, string>;
+  stockOptions: StockOption[];
+  itemErrors: Record<number, ItemFieldErrors>;
   onChange: (index: number, patch: Partial<BillItemInput>) => void;
   onAdd: () => void;
   onRemove: (index: number) => void;
@@ -15,6 +18,7 @@ type Props = {
 export function ItemsEditor({
   items,
   computed,
+  stockOptions,
   itemErrors,
   onChange,
   onAdd,
@@ -28,13 +32,14 @@ export function ItemsEditor({
             key={i}
             index={i}
             item={item}
+            stockOptions={stockOptions}
             lineTotal={computed.items[i]?.lineTotal ?? 0}
             baseTotal={computed.items[i]?.baseTotal ?? 0}
             lineCommission={computed.items[i]?.commission ?? 0}
             canRemove={items.length > 1}
             onChange={onChange}
             onRemove={onRemove}
-            nameError={itemErrors[i]}
+            nameError={itemErrors[i]?.name}
           />
         ))}
       </div>

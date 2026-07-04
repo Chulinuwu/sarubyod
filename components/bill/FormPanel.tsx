@@ -1,5 +1,6 @@
 import type { BillComputed, BillInput, BillItemInput } from "@/lib/bill/types";
 import type { FieldErrors } from "@/lib/bill/validation";
+import type { StockOption } from "@/lib/stock/types";
 import { Section } from "@/components/ui/Section";
 import { HeaderFields } from "./HeaderFields";
 import { ItemsEditor } from "./ItemsEditor";
@@ -9,6 +10,7 @@ type Props = {
   input: BillInput;
   computed: BillComputed;
   errors: FieldErrors;
+  stockOptions: StockOption[];
   setField: <K extends keyof BillInput>(key: K, value: BillInput[K]) => void;
   updateItem: (index: number, patch: Partial<BillItemInput>) => void;
   addItem: () => void;
@@ -19,6 +21,7 @@ export function FormPanel({
   input,
   computed,
   errors,
+  stockOptions,
   setField,
   updateItem,
   addItem,
@@ -33,6 +36,7 @@ export function FormPanel({
         <ItemsEditor
           items={input.items}
           computed={computed}
+          stockOptions={stockOptions}
           itemErrors={errors.items}
           onChange={updateItem}
           onAdd={addItem}

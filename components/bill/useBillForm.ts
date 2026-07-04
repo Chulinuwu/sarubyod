@@ -4,6 +4,7 @@ import { computeBill } from "@/lib/bill/calc";
 import { todayISO } from "@/lib/date";
 
 const emptyItem: BillItemInput = {
+  stockItemId: null,
   name: "",
   basePrice: 0,
   salePrice: 0,

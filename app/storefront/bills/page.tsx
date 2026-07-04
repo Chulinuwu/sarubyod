@@ -43,7 +43,11 @@ export default async function BillsPage({
 
   return (
     <div className="flex min-h-full flex-col">
-      <TopBar displayName={displayName} active="history" />
+      <TopBar
+        displayName={displayName}
+        active="history"
+        isAdmin={session.role === "admin"}
+      />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-5">
         {loadError ? (
           <div className="rounded-lg border border-danger/25 bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
